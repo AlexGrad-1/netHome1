@@ -1,0 +1,35 @@
+cookbook = {}
+dish_names = []
+
+with open('recipes.txt', 'r', encoding='utf-8') as file:
+    lines = file.readlines()
+    i = 0
+    while i < len(lines):
+        dish_name = lines[i].strip()
+        dish_names.append(dish_name)
+        num_ingredients = int(lines[i + 1].strip())
+        j=0
+        for j in range(num_ingredients):
+            ingredient_name, quantity, measure = lines[i + 2 + j].split(' | ')
+            cookbook[dish_name] = cookbook.get(dish_name, [])
+            cookbook[dish_name].append({
+                'ingredient_name': ingredient_name,
+                'quantity': quantity,
+                'measure': measure
+            })
+        i += 3 + num_ingredients  # Переход к следующему блюду
+
+shop_list = {}
+def get_shop_list_by_dishes(dishes, person_count):
+    for dish in dishes:
+        for dish in cookbook[dish]:
+            if dish['ingredient_name'] not in shop_list:
+                shop_list[dish['ingredient_name']] = {
+                    'measure': dish['measure'],
+                    'quantity': int(dish['quantity']) * person_count
+                }
+            else:
+                shop_list[dish['ingredient_name']]['quantity'] += int(dish['quantity']) * person_count 
+    return shop_list        
+print(get_shop_list_by_dishes(['Омлет', 'Фахитос'], 2))
+            
